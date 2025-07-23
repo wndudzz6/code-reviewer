@@ -1,23 +1,23 @@
-name: Java CI with Gradle
+name: Java CI with Gradle # CI 이름 (기본적으로 Gradle을 사용한 Java 프로젝트 빌드)
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" ] # master 브랜치로 푸시될 때마다 실행
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master" ] # master 브랜치로의 풀 리퀘스트가 열릴 때마다 실행
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # 실행 환경 (Ubuntu 최신 버전)
 
     services:
       postgres:
         image: postgres:14
         ports:
-          - 5432:5432
+          - 5432:5432 # 포트 매핑
         env:
-          POSTGRES_USER: sa
-          POSTGRES_PASSWORD: 1234
+          POSTGRES_USER: sa  # PostgreSQL 사용자
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}  # GitHub Secrets에서 비밀번호 가져오기
           POSTGRES_DB: testdb
         options: >-
           --health-cmd pg_isready
