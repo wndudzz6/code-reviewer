@@ -12,5 +12,6 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     Optional<Review> findBySubmissionId(Long submissionId);
 
     //전체 리뷰 조회
-    List<Review> findAllBySubmission_UserId(Long userId);
+    List<Review> findReviewListBySubmission_User_Id(Long userId);
+    List<Review> findReviewListBySubmissionId(Long submissionId);
 }

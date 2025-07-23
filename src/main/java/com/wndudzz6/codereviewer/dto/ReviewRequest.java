@@ -1,5 +1,8 @@
 package com.wndudzz6.codereviewer.dto;
 
+import com.wndudzz6.codereviewer.domain.platform.Difficulty;
+import com.wndudzz6.codereviewer.domain.platform.DifficultyConverter;
+import jakarta.persistence.Convert;
 import lombok.*;
 import java.util.List;
 
@@ -16,5 +19,7 @@ public class ReviewRequest {
     private String improvement;
     private String timeComplexity;
     private String difficulty;
+    private String platform;
+
     private List<String> tags;
 }
