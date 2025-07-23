@@ -27,4 +27,9 @@ public class User {
     //mappedBy = "user" -> Submission 클래스의 필드명
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Submission> submissions;
+
+    public void updateNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
+
 }

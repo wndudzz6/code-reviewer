@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/submissions")
 @RequiredArgsConstructor
@@ -28,4 +30,21 @@ public class SubmissionController {
         Submission submission = submissionService.findById(id);
         return  ResponseEntity.ok(SubmissionResponse.from(submission));
     }
+
+    //유저 전체 제출 목록
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SubmissionResponse>> getSubmissionsByUser(@PathVariable Long userId) {
+        List<SubmissionResponse> submissions = submissionService.findSubmissionListByUserId(userId)
+                .stream()
+                .map(SubmissionResponse::from)
+                .toList();
+        return ResponseEntity.ok(submissions);
+    }
+
+    @GetMapping("/user/{userId}/submissions")
+    public ResponseEntity<List<SubmissionResponse>> getSubmissionsByUserId(@PathVariable Long userId) {
+        List<Submission> submissions = submissionService.findSubmissionListByUserId(userId);
+        return ResponseEntity.ok(submissions.stream().map(SubmissionResponse::from).toList());
+    }
+
 }

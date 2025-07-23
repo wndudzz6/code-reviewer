@@ -1,6 +1,8 @@
 package com.wndudzz6.codereviewer.domain;
 
 
+import com.wndudzz6.codereviewer.domain.platform.Difficulty;
+import com.wndudzz6.codereviewer.domain.platform.DifficultyConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,7 +24,10 @@ public class Review {
     private String codeQuality;
     private String improvement;
     private String timeComplexity;
-    private String difficulty;
+
+    @Convert(converter = DifficultyConverter.class)
+    private Difficulty difficulty;
+    //BoJ or Programmers
 
 
     @ElementCollection
@@ -33,4 +38,11 @@ public class Review {
     private Submission submission;
 
     private LocalDateTime reviewedAt;
+
+//    // Review.java
+//    @PrePersist
+//    protected void onCreate() {
+//        this.reviewedAt = LocalDateTime.now();
+//    }
+
 }

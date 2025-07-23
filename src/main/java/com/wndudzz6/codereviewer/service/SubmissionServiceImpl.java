@@ -26,6 +26,7 @@ public class SubmissionServiceImpl implements SubmissionService {
         Submission submission = Submission.builder()
                 .title(request.getTitle())
                 .problemUrl(request.getProblemUrl())
+                .platform(request.getPlatform())
                 .language(request.getLanguage())
                 .code(request.getCode())
                 .user(user)
@@ -45,6 +46,19 @@ public class SubmissionServiceImpl implements SubmissionService {
 
     @Override
     public List<Submission> getSubmissionByUserId(Long userId) {
-        return submissionRepository.findAllByUserId(userId);
+        return submissionRepository.findSubmissionListByUserId(userId);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        Submission submission = submissionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("제출 기록을 찾을 수 없습니다."));
+
+        submissionRepository.delete(submission);
+    }
+
+    @Override
+    public List<Submission> findSubmissionListByUserId(Long userId) {
+        return submissionRepository.findSubmissionListByUserId(userId);
     }
 }

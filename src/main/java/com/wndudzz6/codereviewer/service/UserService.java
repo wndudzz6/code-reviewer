@@ -11,4 +11,7 @@ public interface UserService {
     User login(UserLoginRequest request);
     //List<Submission> getMySubmissions(Long userId);
     User findById(Long id);
+    User updateNickname(Long userId, String newNickname);
+    void deleteUser(Long userId);
+
 }

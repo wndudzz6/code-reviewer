@@ -2,6 +2,8 @@ package com.wndudzz6.codereviewer.domain;
 
 //제출 목록
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wndudzz6.codereviewer.domain.platform.Platform;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +20,12 @@ public class Submission {
 
     private String title;
     private String problemUrl;
-    private String language;
+
+    @Enumerated(EnumType.STRING)
+    private Platform platform;
+
+    @Enumerated(EnumType.STRING)
+    private Language language;
 
     @Lob
     private String code;
@@ -28,7 +35,13 @@ public class Submission {
     private User user;
 
     @OneToOne(mappedBy = "submission", cascade = CascadeType.ALL)
+    @JsonIgnore //순환참조 방지
     private Review review;
 
     private LocalDateTime submittedAt;
+
+    public void setReview(Review review) {
+        this.review = review;
+    }
+
 }
