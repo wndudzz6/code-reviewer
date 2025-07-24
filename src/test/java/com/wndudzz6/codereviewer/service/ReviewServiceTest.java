@@ -33,9 +33,19 @@ public class ReviewServiceTest {
     @DisplayName(" ReviewService: 리뷰를 저장하는 기능 정상 작동")
     void save_review_correct(){
         //given
-        ReviewRequest dto = new ReviewRequest(
-                "DP 유한 냅색", "dp테이블을 역방향으로 채운다", "상", "확장포인트 : 개수 제한이 클 경우 분할가능 여부 고려", "O(n * k)", BojDifficulty.GOLD_5.name(), "BOJ",List.of("DP", "Knapsack"));
-        Submission submission = Submission.builder().id(1L).build(); //간단하게
+        ReviewRequest dto = ReviewRequest.builder()
+                .summary("DP 유한 냅색")
+                .strategy("dp테이블을 역방향으로 채운다")
+                .codeQuality("상")
+                .improvement("확장포인트 : 개수 제한이 클 경우 분할가능 여부 고려")
+                .timeComplexity("O(n * k)")
+                .difficulty(BojDifficulty.GOLD_5.name())
+                .platform("BOJ")
+                .tags(List.of("DP", "Knapsack"))
+                .build();
+
+        Submission submission = Submission.builder().id(1L).build();
+
 
         //Review 저장하면 동일한 Review 반환 가정
         when(reviewRepository.save(any(Review.class))).thenAnswer(invocation -> invocation.getArgument(0));

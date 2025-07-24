@@ -5,6 +5,7 @@ import com.wndudzz6.codereviewer.domain.Review;
 import com.wndudzz6.codereviewer.domain.Submission;
 import com.wndudzz6.codereviewer.domain.platform.BojDifficulty;
 import com.wndudzz6.codereviewer.domain.platform.Difficulty;
+import com.wndudzz6.codereviewer.domain.platform.DifficultyFactory;
 import com.wndudzz6.codereviewer.domain.platform.ProgrammersDifficulty;
 import com.wndudzz6.codereviewer.dto.ReviewRequest;
 import com.wndudzz6.codereviewer.repository.ReviewRepository;
@@ -22,12 +23,7 @@ public class ReviewServiceImpl implements  ReviewService {
     private final ReviewRepository reviewRepository;
 
     public Review saveReview(ReviewRequest dto, Submission submission) {
-        Difficulty difficulty;
-        switch (dto.getPlatform().toUpperCase()) {
-            case "BOJ" -> difficulty = BojDifficulty.valueOf(dto.getDifficulty());
-            case "PROGRAMMERS" -> difficulty = ProgrammersDifficulty.valueOf(dto.getDifficulty());
-            default -> throw new IllegalArgumentException("지원하지 않는 플랫폼입니다: " + dto.getPlatform());
-        }
+        Difficulty difficulty = DifficultyFactory.from(dto.getPlatform(), dto.getDifficulty());
 
         Review review = Review.builder()
                 .summary(dto.getSummary())

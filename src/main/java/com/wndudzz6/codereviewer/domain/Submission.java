@@ -2,7 +2,6 @@ package com.wndudzz6.codereviewer.domain;
 
 //제출 목록
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wndudzz6.codereviewer.domain.platform.Platform;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,7 +34,6 @@ public class Submission {
     private User user;
 
     @OneToOne(mappedBy = "submission", cascade = CascadeType.ALL)
-    @JsonIgnore //순환참조 방지
     private Review review;
 
     private LocalDateTime submittedAt;

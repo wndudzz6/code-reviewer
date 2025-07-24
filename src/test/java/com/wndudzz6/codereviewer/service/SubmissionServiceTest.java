@@ -38,44 +38,26 @@ public class SubmissionServiceTest {
     @DisplayName("제출 성공")
     void submission_correct() {
 
-        //given
-        SubmissionRequest dto = new SubmissionRequest("백준 12865", "https://www.acmicpc.net/problem/12865", Platform.BOJ, Language.JAVA,"import java.util.Scanner;\n" +
-                "\n" +
-                "public class Main {\n" +
-                "\n" +
-                "    static int solution(int n, int k, int[][] items){\n" +
-                "        int[] dp = new int[k+1];\n" +
-                "        //유한 냅색 역방향\n" +
-                "        for(int i = 0; i<n; i++){\n" +
-                "            int w = items[i][0];\n" +
-                "            int v = items[i][1];\n" +
-                "            for(int j = k; j>=w; j--){\n" +
-                "                dp[j] = Math.max(dp[j], dp[j-w]+v);\n" +
-                "            }\n" +
-                "        }\n" +
-                "\n" +
-                "        return dp[k];\n" +
-                "    }\n" +
-                "    public static void main(String[] args) {\n" +
-                "        Scanner sc = new Scanner(System.in);\n" +
-                "        int n = sc.nextInt();\n" +
-                "        int k = sc.nextInt();\n" +
-                "        int[][] items = new int[n][2];\n" +
-                "        for(int i = 0; i<n; i++){\n" +
-                "            items[i][0] = sc.nextInt();\n" +
-                "            items[i][1] = sc.nextInt();\n" +
-                "        }\n" +
-                "        sc.close();\n" +
-                "        System.out.println(solution(n,k, items));\n" +
-                "    }\n" +
-                "}\n");
+        // given
+        SubmissionRequest dto = SubmissionRequest.builder()
+                .title("백준 12865")
+                .problemUrl("https://www.acmicpc.net/problem/12865")
+                .platform(Platform.BOJ)  // Enum으로 직접 지정
+                .language(Language.JAVA)  // Enum으로 직접 지정
+                .code("import java.util.Scanner;\n" +
+                        "\n" +
+                        "public class Main {\n" +
+                        "    static int solution(int n, int k, int[][] items) { ... }")
+                .userId(1L)
+                .build();
 
         User mockUser = User.builder().id(1L).email("test@email.com").build();
         Submission submission = Submission.builder()
                 .id(1L)
                 .title(dto.getTitle())
                 .problemUrl(dto.getProblemUrl())
-                .language(dto.getLanguage())
+                .platform(dto.getPlatform())  // Enum으로 처리된 platform
+                .language(dto.getLanguage())  // Enum으로 처리된 language
                 .code(dto.getCode())
                 .user(mockUser)
                 .build();
@@ -87,8 +69,8 @@ public class SubmissionServiceTest {
 
         assertThat(result.getTitle()).isEqualTo("백준 12865");
         assertThat(result.getUser().getId()).isEqualTo(1L);
-
     }
+
 
     @Test
     @DisplayName("제출 ID로 단건 조회")
@@ -142,12 +124,35 @@ public class SubmissionServiceTest {
     @DisplayName("존재하지 않는 유저로 제출 시 IllegalArgumentException 발생")
     void submission_user_not_found() {
         // given
-        SubmissionRequest dto = new SubmissionRequest("title", "url", Platform.BOJ, Language.JAVA, "code");
-        when(userRepository.findById(999L)).thenReturn(java.util.Optional.empty());
+        SubmissionRequest dto = SubmissionRequest.builder()
+                .title("백준 12865")
+                .problemUrl("https://www.acmicpc.net/problem/12865")
+                .platform(Platform.BOJ)  // Enum으로 직접 지정
+                .language(Language.JAVA)  // Enum으로 직접 지정
+                .code("import java.util.Scanner;\n" +
+                        "\n" +
+                        "public class Main {\n" +
+                        "    static int solution(int n, int k, int[][] items) { ... }")
+                .userId(1L)
+                .build();
+        User mockUser = User.builder().id(1L).email("test@email.com").build();
+        Submission submission = Submission.builder()
+                .id(1L)
+                .title(dto.getTitle())
+                .problemUrl(dto.getProblemUrl())
+                .platform(dto.getPlatform())  // Enum으로 처리된 platform
+                .language(dto.getLanguage())  // Enum으로 처리된 language
+                .code(dto.getCode())
+                .user(mockUser)
+                .build();
 
-        // when & then
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class,
-                () -> submissionServiceImpl.submit(999L, dto));
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(mockUser));
+        when(submissionRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Submission result = submissionServiceImpl.submit(1L, dto);
+
+        assertThat(result.getTitle()).isEqualTo("백준 12865");
+        assertThat(result.getUser().getId()).isEqualTo(1L);
     }
 
     @Test

@@ -20,6 +20,7 @@ public class ReviewRequest {
     private String timeComplexity;
     private String difficulty;
     private String platform;
+    private String language;
 
     private List<String> tags;
 }

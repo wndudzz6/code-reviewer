@@ -18,6 +18,8 @@ public class ReviewResponse {
     private String improvement;
     private String timeComplexity;
     private String difficulty;
+    private String platform;
+    private String language;
     private List<String> tags;
     private LocalDateTime reviewedAt;
 

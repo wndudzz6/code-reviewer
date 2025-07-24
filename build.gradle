@@ -45,6 +45,10 @@ dependencies {
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
+    //GPT
+    implementation 'com.theokanning.openai-gpt3-java:client:0.18.2'
+
+
     //postgresql
     runtimeOnly 'org.postgresql:postgresql'
 

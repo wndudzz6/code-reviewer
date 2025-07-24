@@ -1,6 +1,7 @@
 package com.wndudzz6.codereviewer.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wndudzz6.codereviewer.domain.platform.Difficulty;
 import com.wndudzz6.codereviewer.domain.platform.DifficultyConverter;
 import jakarta.persistence.*;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Getter @Builder
+@Getter @Builder @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Review {
@@ -35,6 +36,7 @@ public class Review {
 
     @OneToOne
     @JoinColumn(name = "submission_id")
+    @JsonIgnore //순환참조 방지
     private Submission submission;
 
     private LocalDateTime reviewedAt;
