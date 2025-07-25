@@ -39,3 +39,9 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build -Dspring.profiles.active=postgres
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
