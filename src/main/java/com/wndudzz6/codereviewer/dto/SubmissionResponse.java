@@ -18,7 +18,7 @@ public class SubmissionResponse {
     private String problemUrl;
     private Platform platform;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     private Language language;
 
     private String code;

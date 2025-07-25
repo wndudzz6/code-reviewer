@@ -3,7 +3,6 @@ package com.wndudzz6.codereviewer.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wndudzz6.codereviewer.domain.platform.Difficulty;
-import com.wndudzz6.codereviewer.domain.platform.DifficultyConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +25,7 @@ public class Review {
     private String improvement;
     private String timeComplexity;
 
-    @Convert(converter = DifficultyConverter.class)
+    @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
     //BoJ or Programmers
 

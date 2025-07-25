@@ -98,7 +98,7 @@ public class SubmissionServiceTest {
         when(submissionRepository.findSubmissionListByUserId(userId)).thenReturn(List.of(sub));
 
         // when
-        List<Submission> result = submissionServiceImpl.getSubmissionByUserId(userId);
+        List<Submission> result = submissionServiceImpl.findSubmissionListByUserId(userId);
 
         // then
         assertThat(result).hasSize(1);

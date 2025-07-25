@@ -8,7 +8,6 @@ import java.util.List;
 public interface SubmissionService {
     Submission submit(Long userId, SubmissionRequest request);
     Submission findById(Long id);
-    List<Submission> getSubmissionByUserId(Long userId);
     void deleteById(Long id);
     List<Submission> findSubmissionListByUserId(Long userId);
 

@@ -48,10 +48,6 @@ public class SubmissionServiceImpl implements SubmissionService {
 
 
 
-    @Override
-    public List<Submission> getSubmissionByUserId(Long userId) {
-        return submissionRepository.findSubmissionListByUserId(userId);
-    }
 
     @Override
     public void deleteById(Long id) {

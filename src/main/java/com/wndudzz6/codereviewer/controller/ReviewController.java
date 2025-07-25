@@ -21,16 +21,16 @@ public class ReviewController {
     private final SubmissionServiceImpl submissionService;
     private final ReviewServiceImpl reviewService;
 
-    //리뷰 생성
-    @PostMapping
-    public ResponseEntity<ReviewResponse> createReview(
-            @RequestBody ReviewRequest request,
-            @RequestParam Long submissionId
-    ) {
-        Submission submission = submissionService.findById(submissionId);
-        Review saved = reviewService.saveReview(request, submission);
-        return ResponseEntity.ok(ReviewResponse.from(saved));
-    }
+//    //리뷰 생성
+//    @PostMapping
+//    public ResponseEntity<ReviewResponse> createReview(
+//            @RequestBody ReviewRequest request,
+//            @RequestParam Long submissionId
+//    ) {
+//        Submission submission = submissionService.findById(submissionId);
+//        Review saved = reviewService.saveReview(request, submission);
+//        return ResponseEntity.ok(ReviewResponse.from(saved));
+//    }
 
     //리뷰 삭제
     @DeleteMapping("/{id}")
@@ -39,12 +39,14 @@ public class ReviewController {
         return ResponseEntity.noContent().build(); // 상태 코드 204 반환
     }
 
+    //제출 기준 리뷰 조회
     @GetMapping("/submission/{submissionId}")
     public ResponseEntity<List<ReviewResponse>> getReviewsBySubmission(@PathVariable Long submissionId) {
         List<Review> reviews = reviewService.findReviewListBySubmissionId(submissionId);
         return ResponseEntity.ok(reviews.stream().map(ReviewResponse::from).toList());
     }
 
+    //유저 기준 리뷰 조회
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReviewResponse>> getReviewsByUser(@PathVariable Long userId) {
         List<Review> reviews = reviewService.findReviewListByUserId(userId);

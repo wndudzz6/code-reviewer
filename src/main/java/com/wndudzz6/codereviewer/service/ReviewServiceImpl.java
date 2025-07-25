@@ -3,10 +3,7 @@ package com.wndudzz6.codereviewer.service;
 
 import com.wndudzz6.codereviewer.domain.Review;
 import com.wndudzz6.codereviewer.domain.Submission;
-import com.wndudzz6.codereviewer.domain.platform.BojDifficulty;
 import com.wndudzz6.codereviewer.domain.platform.Difficulty;
-import com.wndudzz6.codereviewer.domain.platform.DifficultyFactory;
-import com.wndudzz6.codereviewer.domain.platform.ProgrammersDifficulty;
 import com.wndudzz6.codereviewer.dto.ReviewRequest;
 import com.wndudzz6.codereviewer.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +20,7 @@ public class ReviewServiceImpl implements  ReviewService {
     private final ReviewRepository reviewRepository;
 
     public Review saveReview(ReviewRequest dto, Submission submission) {
-        Difficulty difficulty = DifficultyFactory.from(dto.getPlatform(), dto.getDifficulty());
+        Difficulty difficulty = Difficulty.from(dto.getDifficulty());
 
         Review review = Review.builder()
                 .summary(dto.getSummary())

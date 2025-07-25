@@ -3,7 +3,7 @@ package com.wndudzz6.codereviewer.service;
 
 import com.wndudzz6.codereviewer.domain.Review;
 import com.wndudzz6.codereviewer.domain.Submission;
-import com.wndudzz6.codereviewer.domain.platform.BojDifficulty;
+import com.wndudzz6.codereviewer.domain.platform.Difficulty;
 import com.wndudzz6.codereviewer.dto.ReviewRequest;
 import com.wndudzz6.codereviewer.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -30,40 +30,39 @@ public class ReviewServiceTest {
     private ReviewServiceImpl reviewServiceImpl; //구현체 테스트
 
     @Test
-    @DisplayName(" ReviewService: 리뷰를 저장하는 기능 정상 작동")
-    void save_review_correct(){
-        //given
+    @DisplayName("ReviewService: 리뷰를 저장하는 기능 정상 작동")
+    void save_review_correct() {
+        // given
         ReviewRequest dto = ReviewRequest.builder()
                 .summary("DP 유한 냅색")
                 .strategy("dp테이블을 역방향으로 채운다")
                 .codeQuality("상")
                 .improvement("확장포인트 : 개수 제한이 클 경우 분할가능 여부 고려")
                 .timeComplexity("O(n * k)")
-                .difficulty(BojDifficulty.GOLD_5.name())
+                .difficulty("GOLD_5")
                 .platform("BOJ")
                 .tags(List.of("DP", "Knapsack"))
                 .build();
 
         Submission submission = Submission.builder().id(1L).build();
 
-
-        //Review 저장하면 동일한 Review 반환 가정
         when(reviewRepository.save(any(Review.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        //when
+        // when
         Review saved = reviewServiceImpl.saveReview(dto, submission);
 
-        //then
+        // then
         ArgumentCaptor<Review> captor = ArgumentCaptor.forClass(Review.class);
         verify(reviewRepository, times(1)).save(captor.capture());
 
         Review captured = captor.getValue();
-        assertThat(captured.getSummary()).isEqualTo("DP 유한 냅색");
-        assertThat(captured.getStrategy()).isEqualTo("dp테이블을 역방향으로 채운다");
+        assertThat(captured.getSummary()).isEqualTo(dto.getSummary());
+        assertThat(captured.getStrategy()).isEqualTo(dto.getStrategy());
+        assertThat(captured.getDifficulty()).isEqualTo(Difficulty.GOLD_5);
         assertThat(captured.getSubmission()).isEqualTo(submission);
-        assertThat(saved).isEqualTo(captured);
-
+        assertThat(saved).isEqualTo(captured);  // equals()가 정의돼 있으면 OK
     }
+
 
     @Test
     @DisplayName("ReviewService: 리뷰 삭제 - 정상 작동")
