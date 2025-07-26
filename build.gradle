@@ -55,6 +55,10 @@ dependencies {
     //Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    //Exel
+    implementation 'org.apache.poi:poi:5.2.3'  // POI 기본 라이브러리
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'  // .xlsx 파일을 처리하기 위한 라이브러리
+
 }
 
 tasks.named('test') {
