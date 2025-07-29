@@ -17,4 +17,5 @@ RUN ./gradlew build -x test
 EXPOSE 8080
 
 # JAR 실행
-CMD ["java", "-jar", "build/libs/code-reviewer.jar"]
+CMD ["java", "-Dspring.profiles.active=postgres", "-jar", "build/libs/code-reviewer.jar"]
+
