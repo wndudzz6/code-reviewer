@@ -3,6 +3,7 @@ package com.wndudzz6.codereviewer.controller;
 
 import com.wndudzz6.codereviewer.config.jwt.JwtProvider;
 import com.wndudzz6.codereviewer.domain.User;
+import com.wndudzz6.codereviewer.dto.LoginResponse;
 import com.wndudzz6.codereviewer.dto.UserLoginRequest;
 import com.wndudzz6.codereviewer.dto.UserRegisterRequest;
 import com.wndudzz6.codereviewer.dto.UserResponse;
@@ -27,12 +28,10 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody UserLoginRequest request) {
         User user = userService.login(request);
-
-        //JWT 토큰 발급 후 return
         String token = jwtProvider.generateToken(user.getEmail());
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(new LoginResponse(token, user.getId()));  // ← 이 부분이 핵심!
     }
 
     // 사용자 단건 조회
