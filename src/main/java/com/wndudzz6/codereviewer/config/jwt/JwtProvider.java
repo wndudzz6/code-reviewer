@@ -23,6 +23,8 @@ public class JwtProvider {
 
     @PostConstruct
     public void init() {
+        //실제 값 들어왔는지 체크
+        System.out.println("✅ JWT SecretKey: " + secretKey);
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
