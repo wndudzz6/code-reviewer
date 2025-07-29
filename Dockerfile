@@ -7,6 +7,9 @@ WORKDIR /app
 # 3. Gradle 캐시 및 전체 소스 복사
 COPY . .
 
+#실행권한부여
+RUN chmod +x ./gradlew
+
 # 4. Gradle로 빌드 (테스트 생략)
 RUN ./gradlew build -x test
 
