@@ -1,5 +1,6 @@
 package com.wndudzz6.codereviewer.service;
 
+import com.wndudzz6.codereviewer.dto.GptSubmissionReviewResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wndudzz6.codereviewer.domain.Language;
 import com.wndudzz6.codereviewer.domain.Review;
@@ -7,7 +8,6 @@ import com.wndudzz6.codereviewer.domain.Submission;
 import com.wndudzz6.codereviewer.domain.User;
 import com.wndudzz6.codereviewer.domain.platform.Difficulty;
 import com.wndudzz6.codereviewer.domain.platform.Platform;
-import com.wndudzz6.codereviewer.dto.GptSubmissionReviewResponse;
 import com.wndudzz6.codereviewer.dto.ReviewRequest;
 import com.wndudzz6.codereviewer.dto.SubmissionRequest;
 import com.wndudzz6.codereviewer.repository.ReviewRepository;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,45 +26,34 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Profile("redis")
+@Profile("noredis")
 @RequiredArgsConstructor
 @Slf4j
-public class GptCodeReviewerService implements AICodeReviewerService {
+public class GptCodeReviewerServiceNoRedis implements AICodeReviewerService {
 
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     private final SubmissionRepository submissionRepository;
     private final ReviewRepository reviewRepository;
     private final UserServiceImpl userService;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     @Value("${openai.api.key}")
     private String apiKey;
 
     @Transactional
     public Submission createSubmissionWithReview(String code, Long userId) {
-        // Redis 캐시 확인
-        String cacheKey = "submission_review::" + code.hashCode();
-        GptSubmissionReviewResponse cached = (GptSubmissionReviewResponse) redisTemplate.opsForValue().get(cacheKey);
+        log.info("🔄 Redis 미사용 → GPT 직접 호출");
 
-        if (cached == null) {
-            log.info("❌ 캐시 없음 → GPT 호출");
-            String prompt = buildPrompt(code);
-            GptSubmissionReviewResponse parsed = callGpt(prompt);
-            redisTemplate.opsForValue().set(cacheKey, parsed);  // TTL 지정도 가능
-            cached = parsed;
-        } else {
-            log.info("✅ Redis 캐시 HIT");
-        }
+        String prompt = buildPrompt(code);
+        GptSubmissionReviewResponse response = callGpt(prompt);
 
-        // 엔티티 변환
         User user = userService.findById(userId);
 
         Submission submission = Submission.builder()
-                .title(cached.getSubmission().getTitle())
-                .problemUrl(cached.getSubmission().getProblemUrl())
-                .platform(Platform.valueOf(cached.getSubmission().getPlatform()))
-                .language(Language.valueOf(cached.getSubmission().getLanguage()))
+                .title(response.getSubmission().getTitle())
+                .problemUrl(response.getSubmission().getProblemUrl())
+                .platform(Platform.valueOf(response.getSubmission().getPlatform()))
+                .language(Language.valueOf(response.getSubmission().getLanguage()))
                 .code(code)
                 .user(user)
                 .submittedAt(LocalDateTime.now())
@@ -74,13 +62,13 @@ public class GptCodeReviewerService implements AICodeReviewerService {
         Submission saved = submissionRepository.save(submission);
 
         Review review = Review.builder()
-                .summary(cached.getReview().getSummary())
-                .strategy(cached.getReview().getStrategy())
-                .codeQuality(cached.getReview().getCodeQuality())
-                .improvement(cached.getReview().getImprovement())
-                .timeComplexity(cached.getReview().getTimeComplexity())
-                .difficulty(Difficulty.from(cached.getReview().getDifficulty()))
-                .tags(cached.getReview().getTags())
+                .summary(response.getReview().getSummary())
+                .strategy(response.getReview().getStrategy())
+                .codeQuality(response.getReview().getCodeQuality())
+                .improvement(response.getReview().getImprovement())
+                .timeComplexity(response.getReview().getTimeComplexity())
+                .difficulty(Difficulty.from(response.getReview().getDifficulty()))
+                .tags(response.getReview().getTags())
                 .submission(saved)
                 .reviewedAt(LocalDateTime.now())
                 .build();
@@ -90,12 +78,6 @@ public class GptCodeReviewerService implements AICodeReviewerService {
 
         return saved;
     }
-
-    public static Difficulty from(String input) {
-        String normalized = input.trim().toUpperCase().replace("-", "_").replace(" ", "_");
-        return Difficulty.valueOf(normalized);
-    }
-
 
     private String buildPrompt(String code) {
         return String.format("""
@@ -157,6 +139,7 @@ public class GptCodeReviewerService implements AICodeReviewerService {
             throw new RuntimeException("GPT 응답 파싱 실패", e);
         }
     }
+
     @Override
     public ReviewRequest review(SubmissionRequest request) {
         Submission submission = createSubmissionWithReview(request.getCode(), request.getUserId());
@@ -177,8 +160,4 @@ public class GptCodeReviewerService implements AICodeReviewerService {
     public ReviewRequest createReviewForSubmission(SubmissionRequest request) {
         return review(request);
     }
-
 }
-
-
-
