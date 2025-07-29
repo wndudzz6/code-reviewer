@@ -22,6 +22,10 @@ configurations {
 repositories {
     mavenCentral()
 }
+bootJar {
+    archiveFileName = "code-reviewer.jar"
+}
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
