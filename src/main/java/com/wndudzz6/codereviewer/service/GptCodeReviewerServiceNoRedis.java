@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Profile("noredis")
+@Profile({"noredis", "postgres"})
 @RequiredArgsConstructor
 @Slf4j
 public class GptCodeReviewerServiceNoRedis implements AICodeReviewerService {
