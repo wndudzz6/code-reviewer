@@ -8,10 +8,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,7 +42,7 @@ public class ExportController {
     }
 
     //제출Id로 Exel파일 Export
-    @GetMapping("/excel/{submissionId}")
+    @GetMapping("/excel/{submissionId:[0-9]+}")
     public ResponseEntity<InputStreamResource> exportSingleSubmissionToExcel(@PathVariable Long submissionId) {
         try {
             ReviewSubmissionDTO dto = reviewSubmissionQueryService.getBySubmissionId(submissionId);
@@ -88,4 +85,28 @@ public class ExportController {
         }
 
     }
+
+    @PostMapping("/excel/batch-export")
+    public ResponseEntity<InputStreamResource> exportSelectedSubmissions(@RequestBody List<Long> submissionIds) {
+        try {
+            List<ReviewSubmissionDTO> dtoList = submissionIds.stream()
+                    .map(reviewSubmissionQueryService::getBySubmissionId)
+                    .toList();
+
+            ByteArrayOutputStream excelStream = exelExportService.exportDataToStream(dtoList);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(excelStream.toByteArray());
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=selected_submissions.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new InputStreamResource(inputStream));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
 }
