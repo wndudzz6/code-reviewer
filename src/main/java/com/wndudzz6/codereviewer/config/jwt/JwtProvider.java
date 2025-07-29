@@ -12,6 +12,7 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
+    //properties마다 추가
     @Value("${jwt.secret}")
     private String secretKey;
 
